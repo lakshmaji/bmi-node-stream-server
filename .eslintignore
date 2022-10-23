@@ -2,3 +2,4 @@ node_modules
 dist
 samples
 tmp
+app.d.ts

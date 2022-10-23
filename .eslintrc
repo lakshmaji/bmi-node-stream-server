@@ -8,7 +8,7 @@
     "plugins": ["@typescript-eslint"],
     "root": true,
     "parserOptions": {
-        "tsconfigRootDir": "__dirname",
+        "tsconfigRootDir": ".",
         "project": ["./tsconfig.json"]
     }
 }

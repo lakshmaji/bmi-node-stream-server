@@ -4,10 +4,16 @@ import { handlePersonBMIRequest, handlePersonsBMIRequest } from "./core/person";
 import { createSeedData } from "./seeds/person";
 import { dummy } from "./core/dummy";
 import { BMIPerson } from "./types/external";
-import { addJob, connection, createWorker, queue } from "./config/bull";
+import { addJob, connection, createWorker, PERSON_BMI_QUEUE, queue } from "./config/bull";
 import { Job } from 'bullmq'
 import http from 'http'
 import { createTerminus }  from '@godaddy/terminus';
+
+import { createBullBoard } from '@bull-board/api';
+import { BullAdapter } from '@bull-board/api/bullAdapter';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { ExpressAdapter } from '@bull-board/express';
+import { AddressInfo } from "node:net";
 
 dotenv.config();
 
@@ -26,21 +32,28 @@ export interface SplitterJob extends Record<string, string> {
 
 
 const bananaProcessor = async (job: Job<SplitterJob>): Promise<any> => {
-  console.log("inside bananaProcessor", job)
+  try {
+
+    const result = await handlePersonsBMIRequest(job.data.inputFile, job.data.outputFile);
+    return result
+  } catch(err) {
+    console.log(" err", err)
+  }
 }
 
 const { worker: splitterWorker } = createWorker(
-  "banana",
+  PERSON_BMI_QUEUE,
   bananaProcessor,
   connection,
 );
 
+// take file path from user input (no direct file upload) (file upload is delegated to services like s3, or cloud storage etc)
 app.post("/persons/bulk/bmi", async (req: Request, res: Response) => {
+  console.log("bello incoming post request")
   const inputFile = "samples/inputs/one.json"
   const outputFile = "samples/outputs/one.json"
-  await addJob("banana", { inputFile, outputFile })
-  // TODO: take file path from user input (no direct file upload) (file upload is delegated to services like s3, or cloud storage etc)
-  await handlePersonsBMIRequest(inputFile, outputFile);
+  await addJob(PERSON_BMI_QUEUE, { inputFile, outputFile })
+  
   return res.send("OK");
 });
 
@@ -76,6 +89,19 @@ app.get("/seed", async (req: Request, res: Response) => {
 //   })
 // })
 
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath('/admin/queues');
+
+const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
+  queues: [new BullMQAdapter(queue)],
+  serverAdapter: serverAdapter,
+});
+
+app.use('/admin/queues', serverAdapter.getRouter());
+
+
+
+
 const server = http.createServer(app)
 
 async function onSignal () {
@@ -107,4 +133,7 @@ const options =  {
 }
 createTerminus(server, options)
 
-server.listen(port)
+server.listen(port, ()=>{
+  const ai :AddressInfo = server.address() as AddressInfo
+    console.log(`🚀 listening at ${ai.address} ${ai.port}`)
+})

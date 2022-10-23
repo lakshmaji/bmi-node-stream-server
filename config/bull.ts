@@ -1,17 +1,18 @@
 import { Worker, Processor, ConnectionOptions, Queue } from "bullmq";
 
+export const PERSON_BMI_QUEUE = "banana"
 export const connection: ConnectionOptions = {
     host: process.env.REDIS_HOST || "127.0.0.1",
     port:+(process.env.REDIS_PORT || 6379)
 }
 
-const concurrency = +(process.env.CONCURRENT_WORKERS || 2)
+const concurrency = +(process.env.CONCURRENT_WORKERS || 1)
 
-const queue = new Queue('file transcoding', { connection });
+export const queue = new Queue(PERSON_BMI_QUEUE, { connection });
 
 
-export async function addJob(queueName: string, opts: any) {
-    await queue.add("banana", opts)
+export async function addJob(queueName: string, data: any) {
+    await queue.add(queueName, data, { delay: 500 })
 }
 
 export function createWorker(

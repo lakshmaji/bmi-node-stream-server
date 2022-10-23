@@ -1,13 +1,26 @@
 version: "3.8"
 services:
-  redis:
-    image: redis:latest
+  cache:
+    image: 'redis:alpine'
     ports:
-      - ${REDIS_PORT:-6379}
+      - '6379:6379'
     volumes:
-      - ./redis-data:/tmp/cache
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      retries: 3
-      timeout: 5s
-      
+      - ./tmp/cache:/data
+
+  app:
+    build: .
+    ports:
+      - 3007:3007
+    environment:
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      PORT: 3007
+      CONCURRENT_WORKERS: 1
+    volumes:
+      - ./:/usr/app
+      - /node_modules
+      - /dist
+      - /tmp
+      - /samples/outputs
+    depends_on:
+      - cache

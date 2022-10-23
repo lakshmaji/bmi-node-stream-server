@@ -7,7 +7,6 @@ import { addJob } from '../workers/person.worker';
 class PersonsController {
   // take file path from user input (no direct file upload) (file upload is delegated to services like s3, or cloud storage etc)
   public processBMIInBulk = async (req: express.Request, res: express.Response) => {
-    //   console.log("bello incoming post request")
     const inputFile = 'samples/inputs/one.json';
     const outputFile = 'samples/outputs/one.json';
     await addJob({ inputFile, outputFile });

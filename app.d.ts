@@ -42,8 +42,6 @@ declare module 'bfj' {
     dataError: <T extends string | number | boolean>(value: T) => void;
   }
 
-  // type MyAPpEvent = keyof events
-
   type WalkEmitter = TypedEventEmitter<MessageEvents>;
 
   const array = 'arr';
@@ -55,22 +53,6 @@ declare module 'bfj' {
   const endPrefix = 'end-';
   const end = 'end';
   const error = 'err';
-
-  // export enum events {
-  //     array = array, //  = 'arr',
-  //     object = object, //  = 'obj',
-  //     property = property, // = 'pro',
-  //     string = string, // = 'str',
-  //     number = number, // = 'num',
-  //     literal = literal, // = 'lit',
-  //     endPrefix = endPrefix, // = 'end-',
-  //     end = end, // = 'end',
-  //     error = error, // = 'err'
-  //     endArray = `${endPrefix}${array}`,
-  //     endObject = `${endPrefix}${object}`,
-  //     endLine = `${endPrefix}${object}`,
-  //     dataError = `${error}-data`
-  // }
 
   export const events: Record<keyof MessageEvents, keyof MessageEvents> = {
     array = 'arr',

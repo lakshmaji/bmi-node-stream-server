@@ -16,7 +16,6 @@ export function openJSONInput(filePath: string) {
   const emitter = bfj.walk(fileInputStream);
 
   emitter.on(bfj.events.object, () => {
-    // new object
     currentObject = {};
   });
 

@@ -1,0 +1,7 @@
+dist
+node_modules
+samples
+tmp
+*.md
+*.json
+*.yml

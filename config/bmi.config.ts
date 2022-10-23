@@ -1,7 +1,5 @@
 import { BMIRecord, FactOperator } from "../types";
 
-
-
 export const bmiChart: BMIRecord[] = [
   {
     healthRisk: "Malnutrition",

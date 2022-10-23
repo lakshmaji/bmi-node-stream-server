@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Stream } from "stream";
-import { Gender, Person } from "../types";
+import { Gender, noop, Person } from "../types";
 import { writeJSONOutput } from "../utils/file";
 
 export function createPerson(): Person {
@@ -15,9 +15,9 @@ export function createPerson(): Person {
   return person
 }
 
-export const createSeedData = async (filePath: string, noOfPersons: number) => {
+export const createSeedData =  (filePath: string, noOfPersons: number): void => {
     const readable = new Stream.Readable({ objectMode: true })
-    readable._read = () => {};
+    readable._read = noop;
     readable.pipe(writeJSONOutput(filePath))
 
     Array.from({ length: noOfPersons }).forEach(() => {

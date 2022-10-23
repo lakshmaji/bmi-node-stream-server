@@ -47,3 +47,8 @@ health_risk: string;
 category: string;
 bmi_range: string;
   }
+
+
+export type Noop = () => void;
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const noop: Noop = () => {}

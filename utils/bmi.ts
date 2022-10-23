@@ -1,4 +1,4 @@
-import  {  bmiChart,  } from "../config/config";
+import  {  bmiChart,  } from "../config/bmi.config";
 import { BMIRecord, Condition, FactOperator} from '../types'
 
 
@@ -13,7 +13,7 @@ export const getBMIAnalysis = (bmi: number) : BMIRecord | void => {
 }
 
 const isValidFact = (bmi :number, condition :Condition) : boolean => {
-	var isValid : boolean
+	let isValid : boolean
 	switch (condition.operator) {
     	case FactOperator.GreaterThanOrEqual:
 		    isValid = bmi >= condition.value

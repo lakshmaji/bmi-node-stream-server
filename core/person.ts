@@ -1,8 +1,6 @@
-import fs from "fs";
-import split from "split";
-import { BMIMetrics, Gender, Person as PersonI, PersonBMIMetric } from "../types";
+import { Gender, PersonBMIMetric } from "../types";
 import { openJSONInput, writeJSONOutput } from "../utils/file";
-import stream from "stream";
+import stream, { TransformCallback } from "stream";
 import { computeBMI, getBMIAnalysis } from "../utils/bmi";
 import { BMIPerson } from "../types/external";
 
@@ -11,7 +9,7 @@ const genderMap: Record<"male" | "female", Gender> = {
   female: Gender.Female,
 };
 
-class Person {
+export class Person {
   private _height: number;
   private _weight: number;
   private _gender: Gender;
@@ -43,15 +41,15 @@ class Person {
   }
 }
 
-export const handlePersonsBMIRequest = async (
+export const handlePersonsBMIRequest = (
   inputFile: string,
   outputFile: string
-): Promise<void> => {
-  new Promise((resolve, reject) => {
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
     openJSONInput(inputFile)
       .pipe(appendBMIMetrics())
       .pipe(writeJSONOutput(outputFile))
-      .on("error", (err: any) => {
+      .on("error", (err: Error) => {
         console.log(err);
         reject("Failed!");
       })
@@ -70,8 +68,8 @@ export const handlePersonBMIRequest =  (
 
 function appendBMIMetrics() {
   const transformStream = new stream.Transform({ objectMode: true });
-  transformStream._transform = (inputChunk, encoding, callback) => {
-    var outputChunk = processBMIMetric(inputChunk);
+  transformStream._transform = (inputChunk: BMIPerson, encoding: BufferEncoding, callback: TransformCallback) => {
+    const outputChunk = processBMIMetric(inputChunk);
     transformStream.push(outputChunk);
     callback();
   };

@@ -1,17 +1,19 @@
 import bfj from 'bfj'
 import fs from 'fs'
 import stream from 'stream'
+import { Person } from '../core/person'
+import { noop } from '../types'
 
 export function openJSONInput (filePath: string) {
     const jsonInputStream = new stream.Readable({ objectMode: true })
-    jsonInputStream._read = () => {}
+    jsonInputStream._read = noop
 
     const fileInputStream = fs.createReadStream(filePath);
 
 
 
       
-    let currentObject: any
+    let currentObject: Record<string, string | boolean | number> | undefined
     let currentProperty: string | undefined
 
     const emitter = bfj.walk(fileInputStream)
@@ -25,8 +27,8 @@ export function openJSONInput (filePath: string) {
         currentProperty = name
     })
 
-    let onValue = <T>(value: T) => {
-        if(currentProperty) {
+    const onValue = <T extends string | boolean | number>(value: T) => {
+        if(currentProperty && currentObject) {
             currentObject[currentProperty] = value;
             currentProperty = undefined
         }
@@ -45,7 +47,7 @@ export function openJSONInput (filePath: string) {
         jsonInputStream.push(null)
     })
 
-    emitter.on(bfj.events.error, (err:any) => {
+    emitter.on(bfj.events.error, (err:Error) => {
         jsonInputStream.emit("error", err)
     })
 
@@ -59,7 +61,7 @@ export function writeJSONOutput (filePath: string) {
         let numRecords = 0
 
         const jsonOutputStream = new stream.Writable({ objectMode : true })
-        jsonOutputStream._write = (chunk, encoding, cb) => {
+        jsonOutputStream._write = (chunk: Person, encoding: BufferEncoding, cb: (error?: Error | null) => void) => {
             if(numRecords>0) {
                 fileOutputStream.write(",")
             }

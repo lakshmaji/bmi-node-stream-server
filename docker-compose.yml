@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - ${REDIS_PORT:-6379}
+    volumes:
+      - ./redis-data:/tmp/cache
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      retries: 3
+      timeout: 5s
+      

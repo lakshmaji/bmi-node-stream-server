@@ -7,7 +7,7 @@ const logConfig = {
     }),
     new winston.transports.File({
       level: 'error',
-      filename: 'logs/server.log',
+      filename: 'tmp/logs/server.log',
     }),
   ],
 };

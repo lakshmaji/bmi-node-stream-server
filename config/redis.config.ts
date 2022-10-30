@@ -9,4 +9,5 @@ const redisConfig: ConnectionOptions = {
 export const connection = new IORedis({
   port: redisConfig.port,
   host: redisConfig.host,
+  maxRetriesPerRequest: null,
 });

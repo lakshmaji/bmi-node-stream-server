@@ -1,20 +1,22 @@
-import { connection } from '../config/redis.config';
+import { getConnection } from '../config/redis.config';
 import IORedis from 'ioredis';
+import { logger } from '../config/log.config';
 
 export class RedisCache {
   private readonly cache: IORedis;
+  // in seconds
   private ttl: number;
 
   constructor(ttl: number) {
     this.ttl = ttl;
-    this.cache = connection;
+    this.cache = getConnection();
 
     this.cache.on('connect', () => {
-      console.log(`Redis connection established`);
+      logger.info(`Redis connection established`);
     });
 
     this.cache.on('error', (error: Error) => {
-      console.error(`Redis error, service degraded:`, error);
+      logger.error(`Redis error, service degraded:`, error);
     });
   }
 
@@ -35,8 +37,12 @@ export class RedisCache {
 
     const result = await fetcher();
 
-    await this.cache.set(key, JSON.stringify(result), 'EX', this.ttl);
+    await this.set<T>(key, result);
     return <T>result;
+  }
+
+  async set<T>(key: string, value: T): Promise<void> {
+    await this.cache.set(key, JSON.stringify(value), 'EX', this.ttl);
   }
 
   async del(key: string): Promise<void> {

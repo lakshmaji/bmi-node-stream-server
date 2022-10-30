@@ -19,8 +19,8 @@ export interface BMIRecord {
 }
 
 export interface PersonBMIMetric {
-  height: number;
-  weight: number;
+  height_cm: number;
+  weight_kg: number;
   gender: 'male' | 'female';
   health_risk: string;
   category: string;
@@ -30,3 +30,10 @@ export interface PersonBMIMetric {
 export interface BMIValue {
   bmi: number;
 }
+
+export interface BMIStat {
+  range: string;
+  count: number;
+}
+
+export type BMIStats = Record<string, BMIStat>;

@@ -64,7 +64,7 @@ export function writeJSONOutput(filePath: string) {
 
     const jsonData = JSON.stringify(chunk);
     fileOutputStream.write(jsonData);
-    numRecords += chunk.length;
+    numRecords += chunk.toString().length;
     cb();
   };
 

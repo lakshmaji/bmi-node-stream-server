@@ -1,11 +1,11 @@
 import { HasStreamProperties } from '../../../types';
 import { computeBMI } from '../../../utils/bmi';
 import { BMIValue } from './bmi.model';
-import { Gender, GENDER_MAP } from './constants';
+import { Gender } from './constants';
 
 export interface PersonModel {
-  height: number;
-  weight: number;
+  height_cm: number;
+  weight_kg: number;
   gender: Gender;
 }
 
@@ -14,21 +14,21 @@ export class Person implements BMIValue, HasStreamProperties {
   private _weight: number;
   private _gender: Gender;
 
-  constructor(height: string, weight: string, gender: 'male' | 'female') {
-    this._height = +height;
-    this._weight = +weight;
-    this._gender = GENDER_MAP[gender];
+  constructor(height_cm: string, weight_kg: string, gender: Gender) {
+    this._height = +height_cm;
+    this._weight = +weight_kg;
+    this._gender = gender;
   }
 
   get length(): number {
     return Object.getOwnPropertyNames(this).length;
   }
 
-  get height(): number {
+  get height_cm(): number {
     return this._height;
   }
 
-  get weight(): number {
+  get weight_kg(): number {
     return this._weight;
   }
 

@@ -6,8 +6,15 @@ const redisConfig: ConnectionOptions = {
   port: +(process.env.REDIS_PORT || 6379),
 };
 
-export const connection = new Redis({
-  port: redisConfig.port,
-  host: redisConfig.host,
-  maxRetriesPerRequest: null,
-});
+let connection: Redis;
+
+export const getConnection = () => {
+  if (connection === undefined) {
+    connection = new Redis({
+      port: redisConfig.port,
+      host: redisConfig.host,
+      maxRetriesPerRequest: null,
+    });
+  }
+  return connection;
+};

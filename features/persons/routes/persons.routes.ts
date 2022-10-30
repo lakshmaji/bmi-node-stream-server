@@ -26,7 +26,7 @@ export class PersonsRoutes extends RoutesConfig {
      *            properties:
      *              filepath:
      *                type: string
-     *                example: samples/outputs/dummy_filename.json
+     *                example: storage/uploads/one.json
      *    responses:
      *      200:
      *        description: A JSON object containing key to download the processed results
@@ -47,7 +47,7 @@ export class PersonsRoutes extends RoutesConfig {
      *  post:
      *    summary: Computes given person BMI.
      *    tags: [BMI, Person]
-     *    description: Process person height, weight and returns computed BMI.
+     *    description: Process person height_cm, weight_kg and returns computed BMI.
      *    requestBody:
      *      description: Need Person inputs
      *      required: true
@@ -56,15 +56,15 @@ export class PersonsRoutes extends RoutesConfig {
      *          schema:
      *            type: object
      *            properties:
-     *              HeightCm:
+     *              height_cm:
      *                type: string
-     *              WeightKg:
+     *              weight_kg:
      *                type: string
-     *              Gender:
+     *              gender:
      *                type: string
      *                enum:
-     *                  - Male
-     *                  - Female
+     *                  - male
+     *                  - female
      *    responses:
      *      200:
      *        description: A JSON object containing person BMI metrics
@@ -73,16 +73,16 @@ export class PersonsRoutes extends RoutesConfig {
      *            schema:
      *              type: object
      *              properties:
-     *                height:
+     *                height_cm:
      *                  type: number
-     *                weight:
+     *                weight_kg:
      *                  type: number
      *                health_risk:
      *                  type: string
      *                  description: Health risk (Malnutrition, low risk etc)
      *                category:
      *                  type: string
-     *                  description: BMI category (underweight, normal weight etc)
+     *                  description: BMI category (underweight, normal weight_kg etc)
      *                bmi_range:
      *                  type: string
      *                  description: BMI range (18.5 to 24.9 or 30 to 34.9 etc)
@@ -95,7 +95,7 @@ export class PersonsRoutes extends RoutesConfig {
      *  post:
      *    summary: Seeds persons data.
      *    tags: [Person]
-     *    description: Create random persons with variable height, weight and gender.
+     *    description: Create random persons with variable height_cm, weight_kg and gender.
      *    requestBody:
      *      description: file name
      *      required: true
@@ -106,10 +106,10 @@ export class PersonsRoutes extends RoutesConfig {
      *            properties:
      *              filename:
      *                type: string
-     *                example: dummy_filename
+     *                example: one
      *              no_of_persons:
      *                type: number
-     *                example: 20
+     *                example: 2000000
      *    responses:
      *      200:
      *        description: A JSON object containing file name

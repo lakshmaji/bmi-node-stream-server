@@ -10,8 +10,58 @@ import { RoutesConfig } from './config/routes.config';
 import { PersonsRoutes } from './features/persons/routes/persons.routes';
 import { queue, worker as splitterWorker } from './features/persons/workers/person.worker';
 import { connection } from './config/redis.config';
-import winston from 'winston';
 import { logger } from './config/log.config';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
+
+const swaggerOptions: swaggerJsdoc.Options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'BMI API',
+      version: '1.0.0',
+      description: 'This is a REST API application made with Express and written in typescript.',
+      license: {
+        name: 'Licensed Under MIT',
+        url: 'https://spdx.org/licenses/MIT.html',
+      },
+      contact: {
+        name: 'Lakshmaji',
+        url: 'https://github.com/lakshmaji',
+      },
+    },
+    servers: [
+      {
+        url: 'http://localhost:3007',
+        description: 'Local server',
+      },
+    ],
+    tags: [
+      {
+        name: 'System',
+        description: 'System API',
+      },
+      {
+        name: 'BMI',
+        description: 'BMI APIs for humans',
+      },
+      {
+        name: 'Person',
+        description: 'The Persons API',
+      },
+    ],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+  },
+  apis: [
+    // './features/**/routes/**/routes*.js',
+    // './features/**/routes/*.routes*.js',
+    './features/**/routes/*.routes*.ts',
+    './index.ts',
+  ],
+};
+
+const openapiSpecification = swaggerJsdoc(swaggerOptions);
 
 dotenv.config();
 
@@ -23,9 +73,22 @@ const routes: Array<RoutesConfig> = [];
 
 routes.push(new PersonsRoutes(app));
 
+/**
+ * @swagger
+ * /:
+ *  get:
+ *    summary: The default root path of the system.
+ *    tags: [System]
+ *    description: Returns a greeting text.
+ *    responses:
+ *      200:
+ *        description: Greeting
+ */
 app.get('/', (req: express.Request, res: express.Response) => {
   res.send('Welcome to BMI API');
 });
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
@@ -36,6 +99,17 @@ createBullBoard({
   serverAdapter: serverAdapter,
 });
 
+/**
+ * @swagger
+ * /admin/queues:
+ *  get:
+ *    summary: Monitor jobs in queue.
+ *    tags: [System]
+ *    description: A UI dashboard (un-guarded) for viewing jobs in the queue.
+ *    responses:
+ *      200:
+ *        description: Dashboard
+ */
 app.use('/admin/queues', serverAdapter.getRouter() as RequestHandler);
 
 const server = http.createServer(app);
@@ -50,6 +124,35 @@ function onShutdown(): Promise<boolean> {
   return Promise.resolve(true);
 }
 
+/**
+ * @swagger
+ * /healthcheck:
+ *  get:
+ *    summary: Health status.
+ *    tags: [System]
+ *    description: Redis connection and server health.
+ *    responses:
+ *      200:
+ *        description: A JSON object containing health status
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                status:
+ *                  type: string
+ *                  description: ok
+ *      503:
+ *        description: A JSON object containing health status
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                status:
+ *                  type: string
+ *                  description: error
+ */
 function onHealthCheck(): Promise<void> {
   return connection.status === 'ready' ? Promise.resolve() : Promise.reject(new Error('not ready'));
 }

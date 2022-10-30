@@ -9,11 +9,13 @@ import { AddressInfo } from 'node:net';
 import { RoutesConfig } from './config/routes.config';
 import { PersonsRoutes } from './features/persons/routes/persons.routes';
 import { seedQueue, seedWorker } from './features/persons/workers/person.worker';
-import { queue, worker as splitterWorker } from './features/persons/workers/bmi.worker';
-import { connection } from './config/redis.config';
+import { bmiStatsQueue, bmiStatsWorker } from './features/persons/workers/bmi-stats.worker';
+import { queue, worker as bmiWorker } from './features/persons/workers/bmi.worker';
+import { getConnection } from './config/redis.config';
 import { logger } from './config/log.config';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
+import { BMIRoutes } from './features/bmi/routes/bmi.routes';
 
 // https://swagger.io/docs/specification/about/
 const swaggerOptions: swaggerJsdoc.Options = {
@@ -74,6 +76,7 @@ const port = process.env.PORT;
 const routes: Array<RoutesConfig> = [];
 
 routes.push(new PersonsRoutes(app));
+routes.push(new BMIRoutes(app));
 
 /**
  * @swagger
@@ -97,7 +100,7 @@ serverAdapter.setBasePath('/admin/queues');
 
 // const { addQueue, removeQueue, setQueues, replaceQueues } =
 createBullBoard({
-  queues: [new BullMQAdapter(queue), new BullMQAdapter(seedQueue)],
+  queues: [new BullMQAdapter(queue), new BullMQAdapter(seedQueue), new BullMQAdapter(bmiStatsQueue)],
   serverAdapter: serverAdapter,
 });
 
@@ -124,7 +127,12 @@ const server = http.createServer(app);
 
 async function onSignal() {
   logger.info('server is starting cleanup');
-  return Promise.all([await splitterWorker.close(), await seedWorker.close(), await connection.quit()]);
+  return Promise.all([
+    await bmiWorker.close(),
+    await seedWorker.close(),
+    await bmiStatsWorker.close(),
+    await getConnection().quit(),
+  ]);
 }
 
 function onShutdown(): Promise<boolean> {
@@ -162,7 +170,7 @@ function onShutdown(): Promise<boolean> {
  *                  description: error
  */
 function onHealthCheck(): Promise<void> {
-  return connection.status === 'ready' ? Promise.resolve() : Promise.reject(new Error('not ready'));
+  return getConnection().status === 'ready' ? Promise.resolve() : Promise.reject(new Error('not ready'));
 }
 
 const options: TerminusOptions = {

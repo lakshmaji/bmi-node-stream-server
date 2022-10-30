@@ -8,7 +8,8 @@ import { ExpressAdapter } from '@bull-board/express';
 import { AddressInfo } from 'node:net';
 import { RoutesConfig } from './config/routes.config';
 import { PersonsRoutes } from './features/persons/routes/persons.routes';
-import { queue, seedQueue, worker as splitterWorker } from './features/persons/workers/person.worker';
+import { seedQueue, seedWorker } from './features/persons/workers/person.worker';
+import { queue, worker as splitterWorker } from './features/persons/workers/bmi.worker';
 import { connection } from './config/redis.config';
 import { logger } from './config/log.config';
 import swaggerUi from 'swagger-ui-express';
@@ -123,7 +124,7 @@ const server = http.createServer(app);
 
 async function onSignal() {
   logger.info('server is starting cleanup');
-  return Promise.all([await splitterWorker.close(), await connection.quit()]);
+  return Promise.all([await splitterWorker.close(), await seedWorker.close(), await connection.quit()]);
 }
 
 function onShutdown(): Promise<boolean> {

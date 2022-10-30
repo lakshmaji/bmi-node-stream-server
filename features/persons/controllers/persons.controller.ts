@@ -2,7 +2,8 @@ import express from 'express';
 import { uniqueId } from '../../../utils/id';
 import { handlePersonBMIRequest } from '../core/person';
 import { PersonInput } from '../models/input.model';
-import { addJob, addSeedJob } from '../workers/person.worker';
+import { addJob } from '../workers/bmi.worker';
+import { addSeedJob } from '../workers/person.worker';
 
 class PersonsController {
   // take file path from user input (no direct file upload) (file upload is delegated to services like s3, or cloud storage etc)

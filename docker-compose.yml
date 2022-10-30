@@ -21,6 +21,6 @@ services:
       - /node_modules
       - /dist
       - /tmp
-      - /samples/outputs
+      - /storage/processed
     depends_on:
       - cache

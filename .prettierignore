@@ -1,6 +1,6 @@
 dist
 node_modules
-samples
+storage
 tmp
 *.md
 *.json

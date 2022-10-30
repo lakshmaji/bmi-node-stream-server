@@ -6,8 +6,12 @@ const logConfig = {
       level: 'warn',
     }),
     new winston.transports.File({
+      level: 'info',
+      filename: 'tmp/logs/combined.log',
+    }),
+    new winston.transports.File({
       level: 'error',
-      filename: 'tmp/logs/server.log',
+      filename: 'tmp/logs/errors.log',
     }),
   ],
 };

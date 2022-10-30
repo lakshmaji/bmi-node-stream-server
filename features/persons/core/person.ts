@@ -4,6 +4,7 @@ import { getBMIAnalysis } from '../../../utils/bmi';
 import { Person } from '../models/person.model';
 import { PersonInput } from '../models/input.model';
 import { PersonBMIMetric } from '../models/bmi.model';
+import { logger } from '../../../config/log.config';
 
 export const handlePersonsBMIRequest = (inputFile: string, outputFile: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -11,7 +12,7 @@ export const handlePersonsBMIRequest = (inputFile: string, outputFile: string): 
       .pipe(appendBMIMetrics())
       .pipe(writeJSONOutput(outputFile))
       .on('error', (err: Error) => {
-        console.log(err);
+        logger.error(err);
         reject('Failed!');
       })
       .on('finish', () => {

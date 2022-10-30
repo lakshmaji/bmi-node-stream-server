@@ -10,6 +10,8 @@ import { RoutesConfig } from './config/routes.config';
 import { PersonsRoutes } from './features/persons/routes/persons.routes';
 import { queue, worker as splitterWorker } from './features/persons/workers/person.worker';
 import { connection } from './config/redis.config';
+import winston from 'winston';
+import { logger } from './config/log.config';
 
 dotenv.config();
 
@@ -39,12 +41,12 @@ app.use('/admin/queues', serverAdapter.getRouter() as RequestHandler);
 const server = http.createServer(app);
 
 async function onSignal() {
-  console.log('server is starting cleanup');
+  logger.info('server is starting cleanup');
   return Promise.all([await splitterWorker.close(), await connection.quit()]);
 }
 
 function onShutdown(): Promise<boolean> {
-  console.log('cleanup finished, server is shutting down');
+  logger.info('cleanup finished, server is shutting down');
   return Promise.resolve(true);
 }
 
@@ -62,5 +64,5 @@ createTerminus(server, options);
 
 server.listen(port, () => {
   const ai: AddressInfo = server.address() as AddressInfo;
-  console.log(`🚀 listening at ${ai.address} ${ai.port}`);
+  logger.info(`🚀 listening at ${ai.address} ${ai.port}`);
 });

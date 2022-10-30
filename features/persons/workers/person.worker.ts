@@ -1,5 +1,6 @@
 import { Job } from 'bullmq';
 import { createQueue, createWorker } from '../../../config/bull.config';
+import { logger } from '../../../config/log.config';
 import { connection } from '../../../config/redis.config';
 import { handlePersonsBMIRequest } from '../core/person';
 
@@ -10,9 +11,9 @@ export interface SplitterJob extends Record<string, string> {
 const bananaProcessor = async (job: Job<SplitterJob>): Promise<void> => {
   try {
     const result = await handlePersonsBMIRequest(job.data.inputFile, job.data.outputFile);
-    console.log('result', result);
+    logger.info('result', result);
   } catch (err) {
-    console.log(' err', err);
+    logger.error('err', err);
   }
 };
 

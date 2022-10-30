@@ -29,3 +29,8 @@ docker-compose up -d
 ## Monitor background tasks
 
 Click [here](http://localhost:3007/admin/queues) or Open `http://localhost:3007/admin/queues` in browser
+
+## TODO (Improvements)
+
+- [ ] The project contains minimal logging implementation, this can be improved
+- [ ] Most of the places using procedural paradigm (Could be functional or OOP oriented).

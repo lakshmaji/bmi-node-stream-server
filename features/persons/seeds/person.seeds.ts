@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Stream } from 'stream';
+import { logger } from '../../../config/log.config';
 import { noop } from '../../../types';
 import { writeJSONOutput } from '../../../utils/file';
 import { Gender } from '../models/constants';
@@ -17,14 +18,24 @@ export function createPerson(): PersonModel {
   return person;
 }
 
-export const createSeedData = (filePath: string, noOfPersons: number): void => {
+export const createSeedData = async (filePath: string, noOfPersons: number): Promise<void> => {
   const readable = new Stream.Readable({ objectMode: true });
   readable._read = noop;
-  readable.pipe(writeJSONOutput(filePath));
 
   Array.from({ length: noOfPersons }).forEach(() => {
     readable.push(createPerson());
   });
 
   readable.push(null);
+  return new Promise((resolve, reject) => {
+    readable
+      .pipe(writeJSONOutput(filePath))
+      .on('error', (err: Error) => {
+        logger.error(err);
+        reject('Failed!');
+      })
+      .on('finish', () => {
+        resolve();
+      });
+  });
 };

@@ -8,12 +8,13 @@ import { ExpressAdapter } from '@bull-board/express';
 import { AddressInfo } from 'node:net';
 import { RoutesConfig } from './config/routes.config';
 import { PersonsRoutes } from './features/persons/routes/persons.routes';
-import { queue, worker as splitterWorker } from './features/persons/workers/person.worker';
+import { queue, seedQueue, worker as splitterWorker } from './features/persons/workers/person.worker';
 import { connection } from './config/redis.config';
 import { logger } from './config/log.config';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 
+// https://swagger.io/docs/specification/about/
 const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
@@ -95,7 +96,7 @@ serverAdapter.setBasePath('/admin/queues');
 
 // const { addQueue, removeQueue, setQueues, replaceQueues } =
 createBullBoard({
-  queues: [new BullMQAdapter(queue)],
+  queues: [new BullMQAdapter(queue), new BullMQAdapter(seedQueue)],
   serverAdapter: serverAdapter,
 });
 
@@ -107,8 +108,14 @@ createBullBoard({
  *    tags: [System]
  *    description: A UI dashboard (un-guarded) for viewing jobs in the queue.
  *    responses:
- *      200:
- *        description: Dashboard
+ *      302:
+ *        description: Queue Monitoring Dashboard
+ *        headers:
+ *          Location:
+ *            description: URI where the client can view jobs
+ *            schema:
+ *              type: string
+ *              format: admin/queues
  */
 app.use('/admin/queues', serverAdapter.getRouter() as RequestHandler);
 

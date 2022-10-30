@@ -1,5 +1,7 @@
 # BMI 
 
+[![Lint, Build](https://github.com/lakshmaji/code-2022-lakshmaji/actions/workflows/lint_build.yml/badge.svg?branch=main)](https://github.com/lakshmaji/code-2022-lakshmaji/actions/workflows/lint_build.yml)
+
 A sample express js API, to illustrate handling of JSON files at scale.
 
 ## Installation

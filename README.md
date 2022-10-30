@@ -1,3 +1,7 @@
+# BMI 
+
+A sample express js API, to illustrate handling of JSON files at scale.
+
 ## Installation
 
 1. Install project dependencies
@@ -30,3 +34,13 @@ docker-compose up -d
 
 Click [here](http://localhost:3007/admin/queues) or Open `http://localhost:3007/admin/queues` in browser
 
+## TODO
+
+- [ ] Compute aggregate (BMI stats) (results will be cached to redis)
+- [ ] List results
+- [ ] supertest (e2e only).
+- [ ] The project contains minimal logging implementation, this can be improved.
+- [ ] Most of the places using procedural paradigm (Could be functional or OOP oriented).
+- [ ] Improve download API performance
+- [ ] Add cloud storage (space limitation)
+- [ ] Add auto deploy pipeline

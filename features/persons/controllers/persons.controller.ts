@@ -1,10 +1,12 @@
 import express from 'express';
 import { uniqueId } from '../../../utils/id';
 import { handlePersonBMIRequest } from '../core/person';
-import { PersonInput } from '../models/input.model';
-import { addBMIStatsJob } from '../workers/bmi-stats.worker';
-import { addJob } from '../workers/bmi.worker';
-import { addSeedJob } from '../workers/person.worker';
+import { addBMIStatsJob } from '../../bmi/workers/bmi-stats.worker';
+import { addPersonsBMIJob } from '../workers/person-bmi.worker';
+import { addSeedPersonsJob } from '../workers/person-seed.worker';
+import { PersonInput } from '../../../shared/models';
+import { NO_OF_PERSONS } from '../constants';
+import { JSONFileInputPath, JSONFileOutputPath } from '../utils';
 
 class PersonsController {
   // take file path from user input (no direct file upload) (file upload is delegated to services like s3, or cloud storage etc)
@@ -13,10 +15,8 @@ class PersonsController {
     res: express.Response,
   ) => {
     const inputFile = req.body.filepath;
-
     const key = uniqueId();
-    const outputFile = `storage/processed/${key}.json`;
-    await addJob({ inputFile, outputFile });
+    await addPersonsBMIJob({ inputFile, outputFile: JSONFileOutputPath(key) });
     await addBMIStatsJob({ inputFile });
     res.status(200).json({
       key,
@@ -40,18 +40,15 @@ class PersonsController {
     req: express.Request<Record<string, string>, Record<string, never>, { filename: string; no_of_persons: number }>,
     res: express.Response,
   ) => {
-    const outputFile = `storage/uploads/${req.body.filename}.json`;
-    const NO_OF_PERSONS = 100;
-    await addSeedJob({ outputFile, noOfPersons: req.body.no_of_persons || NO_OF_PERSONS });
+    const outputFile = JSONFileInputPath(req.body.filename);
+    await addSeedPersonsJob({ outputFile, noOfPersons: req.body.no_of_persons || NO_OF_PERSONS });
     res.status(200).json({ message: `Find seeds at ${outputFile}.` });
   };
 
-  public downloadBMIInBulk = (req: express.Request<{ key: string }, Record<string, never>>, res: express.Response) => {
-    const key = req.params.key;
-    const filePath = `storage/processed/${key}.json`;
-
+  public downloadBMIReport = (req: express.Request<{ key: string }, Record<string, never>>, res: express.Response) => {
+    const filepath = JSONFileOutputPath(req.params.key);
     try {
-      res.download(filePath);
+      res.download(filepath);
     } catch (err) {
       res.sendStatus(500);
     }

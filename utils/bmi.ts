@@ -1,5 +1,5 @@
 import { bmiChart } from '../config/bmi.config';
-import { BMIRecord, Condition, FactOperator } from '../features/persons/models/bmi.model';
+import { BMIRecord, Condition, FactOperator } from '../features/bmi/models/bmi.model';
 
 const cmToMeters = (cm: number): number => {
   return cm / 100;

@@ -147,7 +147,7 @@ export class PersonsRoutes extends RoutesConfig {
      *              type: string
      *              format: binary
      */
-    this.app.route('/persons/bulk/bmi/:key').get(personsController.downloadBMIInBulk);
+    this.app.route('/persons/bulk/bmi/:key').get(personsController.downloadBMIReport);
 
     return this.app;
   }

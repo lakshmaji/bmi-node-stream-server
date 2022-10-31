@@ -18,19 +18,6 @@ export interface BMIRecord {
   rangeFacts: Condition[];
 }
 
-export interface PersonBMIMetric {
-  height_cm: number;
-  weight_kg: number;
-  gender: 'male' | 'female';
-  health_risk: string;
-  category: string;
-  bmi_range: string;
-}
-
-export interface BMIValue {
-  bmi: number;
-}
-
 export interface BMIStat {
   range: string;
   count: number;

@@ -8,5 +8,13 @@
         "**/Thumbs.db": true,
         "node_modules": true,
         "dist": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "app.d.ts": true,
+        "*.json": true,
+
     }
 }

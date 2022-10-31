@@ -1,21 +1,21 @@
-import { Worker, Processor, ConnectionOptions, Queue, Job } from 'bullmq';
+import { Worker, Processor, ConnectionOptions, Queue, Job, JobsOptions } from 'bullmq';
 import { logger } from './log.config';
 import { getConnection } from './redis.config';
 
 const concurrency = +(process.env.CONCURRENT_WORKERS || 1);
 
-export const createQueue = <T>(name: string) =>
+const createQueue = <T>(name: string) =>
   new Queue<T>(name, {
     connection: getConnection(),
-    // defaultJobOptions: {
-    //   removeOnComplete: {
-    //     age: 3600, // keep up to 1 hour
-    //     count: 50, // keep up to 50 jobs
-    //   },
-    // },
+    defaultJobOptions: {
+      removeOnComplete: {
+        age: 3600, // keep up to 1 hour
+        count: 50, // keep up to 50 jobs
+      },
+    },
   });
 
-export function createWorker<T>(name: string, processor: Processor, connection: ConnectionOptions) {
+function createWorker<T>(name: string, processor: Processor, connection: ConnectionOptions) {
   const worker = new Worker(name, processor, {
     connection,
     concurrency,
@@ -46,4 +46,21 @@ export function createWorker<T>(name: string, processor: Processor, connection: 
   });
 
   return worker;
+}
+
+export function createWorkerQueue<T>(name: string, processor: Processor, opts?: JobsOptions) {
+  const _worker = createWorker<T>(name, processor, getConnection());
+  const _queue = createQueue<T>(name);
+  async function _addJob(data: T) {
+    await _queue.add(name, data, {
+      delay: 500,
+      ...(!!opts && opts),
+    });
+  }
+
+  return {
+    worker: _worker,
+    queue: _queue,
+    addJob: _addJob,
+  };
 }

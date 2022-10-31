@@ -1,4 +1,4 @@
-import { BMIRecord, FactOperator } from '../features/persons/models/bmi.model';
+import { BMIRecord, FactOperator } from '../features/bmi/models/bmi.model';
 
 export const bmiChart: BMIRecord[] = [
   {

@@ -1,7 +1,6 @@
+import { BMIValue, Gender } from '../../../shared/models';
 import { HasStreamProperties } from '../../../types';
 import { computeBMI } from '../../../utils/bmi';
-import { BMIValue } from './bmi.model';
-import { Gender } from './constants';
 
 export interface PersonModel {
   height_cm: number;

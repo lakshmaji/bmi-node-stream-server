@@ -2,7 +2,9 @@
 
 [![Lint, Build](https://github.com/lakshmaji/code-2022-lakshmaji/actions/workflows/lint_build.yml/badge.svg?branch=main)](https://github.com/lakshmaji/code-2022-lakshmaji/actions/workflows/lint_build.yml)
 
-A sample express js API, to illustrate handling of JSON files at scale.
+A sample express js API, to illustrate handling of JSON files at scale (in GB's).
+
+![API documentation](./.github/docs.png)
 
 ## Installation
 
@@ -43,7 +45,7 @@ Click [here](http://localhost:3007/admin/queues) or Open `http://localhost:3007/
 ## TODO
 
 - [ ] supertest (e2e only).
-- [ ] The project contains minimal logging implementation, this can be improved.
-- [ ] Most of the places using procedural paradigm (Could be functional or OOP oriented).
+- [ ] input Validations
 - [ ] Add cloud storage (space limitation with disk storage)
 - [ ] Add auto deploy pipeline (after cloud storage integration is completed).
+- [ ] Could use observables to communicate between features (in isolation)

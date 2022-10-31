@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { Stream } from 'stream';
 import { logger } from '../../../config/log.config';
+import { Gender } from '../../../shared/models';
 import { noop } from '../../../types';
 import { writeJSONOutput } from '../../../utils/file';
-import { Gender } from '../models/constants';
 import { PersonModel } from '../models/person.model';
 
 export function createPerson(): PersonModel {

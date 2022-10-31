@@ -15,7 +15,7 @@ export class BMIRoutes extends RoutesConfig {
      *  get:
      *    summary: View BMI stats.
      *    tags: [BMI]
-     *    description: BMI persons count w.r.t BMI range chart.
+     *    description: BMI stats & count w.r.t BMI range chart.
      *    responses:
      *      200:
      *        description: Returns JSON object

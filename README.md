@@ -46,4 +46,4 @@ Click [here](http://localhost:3007/admin/queues) or Open `http://localhost:3007/
 - [ ] The project contains minimal logging implementation, this can be improved.
 - [ ] Most of the places using procedural paradigm (Could be functional or OOP oriented).
 - [ ] Add cloud storage (space limitation with disk storage)
-- [ ] Add auto deploy pipeline
+- [ ] Add auto deploy pipeline (after cloud storage integration is completed).
